@@ -46,6 +46,27 @@ describe Viking do
     it "dropping the weapon makes viking weaponless" do
       expect(viking_bow.drop_weapon).to be nil
     end
+  end
+
+  describe "#receive_attack" do
+
+    it "receiving attack reduces health by specified amount" do
+      expect{viking.receive_attack(10)}.to change(viking, :health).by(-10)
+    end
+
+    xit "receive_attack calls take_damage method" do
+      fake = double("fake", :take_damage => -10)
+      allow(viking).to receive(:take_damage).with(10)
+      expect(fake).to receive(fake).with(10)
+    end
+
+
+
+
+
+
+
+
 
   end
 
