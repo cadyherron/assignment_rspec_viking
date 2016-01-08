@@ -35,7 +35,7 @@ describe Warmup do
       warmup.calls_some_methods(fake_string)
     end
     it 'method returns a random string' do
-      expect(warmup.calls_some_methods(fake_string)).to eq("I am unrelated")
+      expect(warmup.calls_some_methods(fake_string)).to_not equal(fake_string)
     end   
   end
 end

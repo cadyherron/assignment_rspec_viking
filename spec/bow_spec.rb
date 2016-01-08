@@ -21,6 +21,10 @@ describe Bow do
       expect(bow_6.arrows).to eq(6)
     end
 
+  end
+
+  describe "#use" do
+
     it "using a bow reduces arrows by 1" do
       expect{bow.use}.to change(bow,:arrows).by(-1)
     end
