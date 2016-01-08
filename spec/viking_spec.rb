@@ -1,1 +1,9 @@
-# Your code here
+require 'viking'
+
+
+describe Viking do
+
+
+
+
+end
