@@ -5,7 +5,7 @@ require'./lib/weapons/weapon'
 describe Viking do
 
   let ( :viking ) { Viking.new("Olaf", 50)}
-  let ( :viking_bow ) { Viking.new("Beau", 100, 10, "Bow")}
+  let ( :viking_bow ) { Viking.new("Beau", 100, 10, Bow.new)}
 
   describe '#initialize' do
     it "creates a viking with the name we pass it" do
@@ -37,8 +37,6 @@ describe Viking do
     end
 
     it "switching weapons replaces the viking's existing weapon" do
-      # viking.pick_up_weapon(Bow.new)
-      # expect(viking.weapon).to be_an_instance_of(Bow)
       viking_bow.pick_up_weapon(Axe.new)
       expect(viking_bow.weapon).to be_an_instance_of(Axe)
     end
@@ -50,25 +48,57 @@ describe Viking do
 
   describe "#receive_attack" do
 
-    it "receiving attack reduces health by specified amount" do
+    it "reduces health of target by specified amount" do
       expect{viking.receive_attack(10)}.to change(viking, :health).by(-10)
     end
 
-    xit "receive_attack calls take_damage method" do
-      fake = double("fake", :take_damage => -10)
-      allow(viking).to receive(:take_damage).with(10)
-      expect(fake).to receive(fake).with(10)
+    it "calls take_damage method" do
+      expect(viking).to receive(:take_damage)
+      viking.receive_attack(5)
     end
-
-
-
-
-
-
-
-
-
+  
   end
 
+  describe "#attack" do
+    it 'attacking another viking, drops their health' do
+      expect{viking.attack(viking_bow)}.to change(viking_bow, :health).by(-2.5)
+    end
+    it 'attacking another Viking calls Viking take damage method' do
+      expect(viking_bow).to receive(:take_damage)
+      viking.attack(viking_bow)
+    end
+    it 'with no weapons, runs damages with fists' do
+      expect(viking).to receive(:damage_with_fists).and_return(5)
+      viking.attack(viking_bow)
+    end
+
+    it 'with no weapons, deals multiplier times strength' do
+      damage = Fists.new.use*viking.strength
+      expect(viking).to receive(:damage_with_fists).and_return(damage)
+       viking.attack(viking_bow)
+    end
+
+    it 'with weapon, runs damage_with_weapon' do
+      expect(viking_bow).to receive(:damage_with_weapon).and_return(5)
+      viking_bow.attack(viking)
+    end
+    it 'with weapon, deals damage multiplier times strength' do
+      damage = Bow.new.use*viking_bow.strength
+      expect(viking_bow).to receive(:damage_with_weapon).and_return(damage)
+      viking_bow.attack(viking)
+    end
+    it 'with Bow, with no arrows, attacks with fists' do
+      10.times {viking_bow.weapon.use}
+      2.times {viking_bow.attack(viking)}
+      expect(viking_bow).to receive(:damage_with_fists).and_return(5)
+      viking_bow.attack(viking)
+    end
+  end
+
+  context 'player has died' do
+    it "killing a viking raises error" do
+      expect{20.times{viking_bow.attack(viking)}}.to raise_error()
+    end
+  end  
 
 end
